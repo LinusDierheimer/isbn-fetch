@@ -1,0 +1,25 @@
+{
+  "name": "isbn-fetch",
+  "version": "1.0.0",
+  "description": "Fetch book metadata from various sources given an isbn",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx test/index.ts"
+  },
+  "keywords": [
+    "isbn",
+    "book"
+  ],
+  "author": {
+    "name": "Linus Dierheimer",
+    "email": "Linus@Dierheimer.de",
+    "url": "https://github.com/LinusDierheimer"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "tsx": "^4.19.2"
+  }
+}
