@@ -2,6 +2,34 @@
 
 A small package that fetches book information given an ISBN number.
 
+## Usage
+
+```typescript
+import IsbnFetch from 'isbn-fetch';
+
+// Fetch a book with the best possible information
+// Note: this method does not throw an error even if all providers fail
+const book = await IsbnFetch.combined('978-3-453-31716-1');
+
+// Fetch a book from Google Books
+try {
+    const book = await IsbnFetch.googlebooks('978-3-453-31716-1');
+} catch (e) {
+    console.error(e);
+}
+```
+
+## Providers
+
+| function name | description |
+| --- | --- |
+| `googlebooks` | Fetches book information from the Google Books API. |
+| `openlibrary` | Fetches book information from the Open Library API. |
+| `combined` | Fetches book information from both the Google Books and Open Library APIs. Tries to return the most complete information. |
+
+All providers are exported as functions from the default export object.  
+For more infomation about a specific method see the documentation in the type definition files.
+
 ## Types
 
 A `Book` object is defined as follows:
@@ -30,19 +58,8 @@ All provider functions have the following signature:
 async function provider(isbn: string): Promise<Book>;
 ```
 
-## Providers
+## Installation
 
-| function name | description |
-| --- | --- |
-| `googlebooks` | Fetches book information from the Google Books API. |
-| `openlibrary` | Fetches book information from the Open Library API. |
-| `combined` | Fetches book information from both the Google Books and Open Library APIs. Tries to return the most complete information. |
-
-For more infomation, see the documentation in the type definitions.
-
-## Usage
-
-```typescript
-import IsbnFetch from 'isbn-fetch';
-const book = await IsbnFetch.fetch('978-3-453-31716-1');
+```bash
+npm i isbn-fetch --save
 ```
