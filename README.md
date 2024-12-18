@@ -27,17 +27,16 @@ type Book = {
 All provider functions have the following signature:
 
 ```typescript
-type Provider = (isbn: string) => Promise<Book>;
+async function provider(isbn: string): Promise<Book>;
 ```
 
 ## Providers
-
 
 | function name | description |
 | --- | --- |
 | `googlebooks` | Fetches book information from the Google Books API. |
 | `openlibrary` | Fetches book information from the Open Library API. |
-| `fetch` | Fetches book information from both the Google Books API and the Open Library API. It then merges the data from both sources, preferring the data from the provider that is known to be more reliable for that field. |
+| `combined` | Fetches book information from both the Google Books and Open Library APIs. Tries to return the most complete information. |
 
 For more infomation, see the documentation in the type definitions.
 

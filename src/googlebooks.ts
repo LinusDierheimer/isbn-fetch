@@ -1,4 +1,4 @@
-import type IsbnFetch from ".";
+import type { Book } from ".";
 
 type GoogleBooksVolumeInfo = {
   title: string;
@@ -33,7 +33,14 @@ type GoogleBooksVolumeResponse = {
   items: GoogleBooksVolume[];
 };
 
-export default async function googlebooks(isbn: string): Promise<IsbnFetch.Book> {
+/**
+ * Fetches a book from Google Books.
+ *
+ * @throws an error if the fetch fails.
+ * @param isbn the ISBN to fetch. Should be a valid ISBN-10 or ISBN-13.
+ * @returns a Book object with the fetched data.
+ */
+export default async function googlebooks(isbn: string): Promise<Book> {
   const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
   if (!response.ok)
     throw new Error("fetch googlebooks failed: " + response.statusText);
@@ -43,11 +50,11 @@ export default async function googlebooks(isbn: string): Promise<IsbnFetch.Book>
     throw new Error("No items found");
   }
 
-  let book: IsbnFetch.Book = {
+  let book: Book = {
     isbnSource: isbn,
   };
 
-  for(const item of data.items) {
+  for (const item of data.items) {
     book = {
       isbn10: item.volumeInfo.industryIdentifiers.find(i => i.type === "ISBN_10")?.identifier,
       isbn13: item.volumeInfo.industryIdentifiers.find(i => i.type === "ISBN_13")?.identifier,

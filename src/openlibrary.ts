@@ -1,4 +1,4 @@
-import type IsbnFetch from ".";
+import type { Book } from ".";
 
 const OPENLIBRARY_BASE_URL = "https://openlibrary.org";
 const OPENLIBRARY_COVER_URL = "https://covers.openlibrary.org/b/id";
@@ -41,7 +41,7 @@ type OpenLibraryWork = {
 
 //Openlibrary returns a lot of junk. We are only interested in stuff we know is a genre
 function parseSubjects(subjects?: string[]): string[] {
-  if(!subjects || subjects.length === 0)
+  if (!subjects || subjects.length === 0)
     return [];
 
   let keywords = [
@@ -53,13 +53,13 @@ function parseSubjects(subjects?: string[]): string[] {
 
   for (const subject of subjects) {
     //Openlibrary returns some subjects that are not genres, like award:hugo_award=novel
-    if(subject.includes(":"))
+    if (subject.includes(":"))
       continue;
 
     const subjectLowercase = subject.toLowerCase();
 
-    for(const keyword of keywords) {
-      if(!subjectLowercase.includes(keyword))
+    for (const keyword of keywords) {
+      if (!subjectLowercase.includes(keyword))
         continue;
 
       result.push(subjectLowercase[0].toUpperCase() + subjectLowercase.slice(1));
@@ -67,7 +67,7 @@ function parseSubjects(subjects?: string[]): string[] {
       break;
     }
 
-    if(result.length >= 3 || keywords.length === 0)
+    if (result.length >= 3 || keywords.length === 0)
       break;
   }
 
@@ -136,22 +136,35 @@ function parseIsbn(isbn: string[]): string | undefined {
   return isbn.filter(i => i.length > 0).shift();
 }
 
-export default async function openlibrary(isbn: string): Promise<IsbnFetch.Book> {
+/**
+ * Fetches a book from Open Library.
+ *
+ * @throws an error if the fetch fails.
+ * @param isbn the ISBN to fetch. Should be a valid ISBN-10 or ISBN-13.
+ * @returns a Book object with the fetched data.
+ */
+export default async function openlibrary(isbn: string): Promise<Book> {
   const response = await fetch(`${OPENLIBRARY_BASE_URL}/isbn/${isbn}.json`);
   if (!response.ok)
     throw new Error("fetch openlibrary failed: " + response.statusText);
 
   const data = await response.json() as OpenLibraryBook;
 
+  const [authors, genres, language] = await Promise.all([
+    parseAuthors(data.authors),
+    parseGenres(data.works),
+    parseLanguages(data.languages)
+  ]);
+
   return {
     isbnSource: isbn,
     isbn10: parseIsbn(data.isbn_10),
     isbn13: parseIsbn(data.isbn_13),
     title: data.title,
-    authors: await parseAuthors(data.authors),
+    authors: authors,
     publishedDate: data.publish_date,
-    genres: await parseGenres(data.works),
-    language: await parseLanguages(data.languages),
+    genres: genres,
+    language: language,
     thumbnail: data.covers.length > 0 ? `${OPENLIBRARY_COVER_URL}/${data.covers[0]}-L.jpg` : undefined,
     thumbnailSmall: data.covers.length > 0 ? `${OPENLIBRARY_COVER_URL}/${data.covers[0]}-S.jpg` : undefined,
     description: data.description,

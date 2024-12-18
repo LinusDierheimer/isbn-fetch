@@ -1,6 +1,6 @@
-import IsbnFetch from "../src/index";
+import IsbnFetch from '../src/index';
 
 (async () => {
-    const book = await IsbnFetch.fetch('978-3-453-31716-1');
+    const book = await IsbnFetch.combined('978-3-453-31716-1');
     console.log(book);
 })();
