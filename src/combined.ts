@@ -4,14 +4,6 @@ import openlibrary from "./openlibrary";
 
 const EMPTY_BOOK: Book = { isbnSource: "" };
 
-async function promiseOrDefault<T>(promise: Promise<T>, defaultValue: T): Promise<T> {
-  try {
-    return await promise;
-  } catch {
-    return defaultValue;
-  }
-}
-
 /**
  * This method fetches book data from both {@link googlebooks} and {@link openlibrary}.
  * It then merges the data from both sources, preferring the data from the provider that is known to be more reliable for that field.
@@ -23,8 +15,8 @@ async function promiseOrDefault<T>(promise: Promise<T>, defaultValue: T): Promis
  */
 export default async function combined(isbn: string): Promise<Book> {
   const [googlebooks_book, openlibrary_book] = await Promise.all([
-    promiseOrDefault(googlebooks(isbn), EMPTY_BOOK),
-    promiseOrDefault(openlibrary(isbn), EMPTY_BOOK),
+    googlebooks(isbn).catch(() => EMPTY_BOOK),
+    openlibrary(isbn).catch(() => EMPTY_BOOK),
   ]);
 
   return {
