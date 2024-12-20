@@ -1,4 +1,4 @@
-import type { Book } from ".";
+import type { Book, FetchOptions } from ".";
 
 const OPENLIBRARY_BASE_URL = "https://openlibrary.org";
 const OPENLIBRARY_COVER_URL = "https://covers.openlibrary.org/b/id";
@@ -39,13 +39,13 @@ type OpenLibraryWork = {
   subjects: string[];
 };
 
-async function parseGenres(works?: OpenLibraryReference[]): Promise<string[] | undefined> {
+async function parseGenres(works?: OpenLibraryReference[], fetchOptions?: FetchOptions): Promise<string[] | undefined> {
   if (!works || works.length === 0)
     return undefined;
 
   const subjects = (await Promise.all(works.map(async work => {
     try {
-      const response = await fetch(`${OPENLIBRARY_BASE_URL}${work.key}.json`);
+      const response = await fetch(`${OPENLIBRARY_BASE_URL}${work.key}.json`, fetchOptions);
       if (!response.ok)
         throw new Error("fetch openlibrary work failed: " + response.statusText);
 
@@ -92,12 +92,12 @@ async function parseGenres(works?: OpenLibraryReference[]): Promise<string[] | u
   return result.length > 0 ? result : undefined;
 }
 
-async function parseLanguages(languages?: OpenLibraryReference[]): Promise<string | undefined> {
+async function parseLanguages(languages?: OpenLibraryReference[], fetchOptions?: FetchOptions): Promise<string | undefined> {
   if (!languages || languages.length === 0)
     return undefined;
 
   try {
-    const response = await fetch(`${OPENLIBRARY_BASE_URL}${languages[0].key}.json`);
+    const response = await fetch(`${OPENLIBRARY_BASE_URL}${languages[0].key}.json`, fetchOptions);
     if (!response.ok)
       throw new Error("fetch openlibrary language failed: " + response.statusText);
 
@@ -114,13 +114,13 @@ async function parseLanguages(languages?: OpenLibraryReference[]): Promise<strin
   }
 }
 
-async function parseAuthors(authors?: OpenLibraryReference[]): Promise<string[] | undefined> {
+async function parseAuthors(authors?: OpenLibraryReference[], fetchOptions?: FetchOptions): Promise<string[] | undefined> {
   if (!authors || authors.length === 0)
     return undefined
 
   return (await Promise.all(authors.map(async author => {
     try {
-      const response = await fetch(`${OPENLIBRARY_BASE_URL}${author.key}.json`);
+      const response = await fetch(`${OPENLIBRARY_BASE_URL}${author.key}.json`, fetchOptions);
       if (!response.ok)
         throw new Error("fetch openlibrary author failed: " + response.statusText);
 
@@ -154,17 +154,17 @@ function parseCover(covers: string[] | undefined, size: "S" | "M" | "L"): string
  * @param isbn the ISBN to fetch. Should be a valid ISBN-10 or ISBN-13.
  * @returns a Book object with the fetched data.
  */
-export default async function openlibrary(isbn: string): Promise<Book> {
-  const response = await fetch(`${OPENLIBRARY_BASE_URL}/isbn/${isbn}.json`);
+export default async function openlibrary(isbn: string, fetchOptions?: FetchOptions): Promise<Book> {
+  const response = await fetch(`${OPENLIBRARY_BASE_URL}/isbn/${isbn}.json`, fetchOptions);
   if (!response.ok)
     throw new Error("fetch openlibrary failed: " + response.statusText);
 
   const data = await response.json() as OpenLibraryBook;
 
   const [authors, genres, language] = await Promise.all([
-    parseAuthors(data.authors),
-    parseGenres(data.works),
-    parseLanguages(data.languages)
+    parseAuthors(data.authors, fetchOptions),
+    parseGenres(data.works, fetchOptions),
+    parseLanguages(data.languages, fetchOptions),
   ]);
 
   return {

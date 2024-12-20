@@ -55,8 +55,15 @@ type Book = {
 All provider functions have the following signature:
 
 ```typescript
-async function provider(isbn: string): Promise<Book>;
+async function provider(isbn: string, fetchOptions?: FetchOptions): Promise<Book>;
 ```
+
+Fetch options are a stripped down version of the `RequestInit` interface:
+```typescript
+type FetchOptions = Omit<RequestInit, "body" | "method" | "keepalive">;
+```
+
+For more information see the documentation in the type definition files.
 
 ## Installation
 

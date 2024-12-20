@@ -1,6 +1,6 @@
 {
   "name": "isbn-fetch",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "Fetch book metadata from various sources given an isbn",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -1,4 +1,4 @@
-import type { Book } from ".";
+import type { Book, FetchOptions } from ".";
 import googlebooks from "./googlebooks";
 import openlibrary from "./openlibrary";
 
@@ -13,10 +13,10 @@ const EMPTY_BOOK: Book = { isbnSource: "" };
  * @param isbn the ISBN to fetch. Should be a valid ISBN-10 or ISBN-13.
  * @returns a Book object with the fetched data.
  */
-export default async function combined(isbn: string): Promise<Book> {
+export default async function combined(isbn: string, fetchOptions?: FetchOptions): Promise<Book> {
   const [googlebooks_book, openlibrary_book] = await Promise.all([
-    googlebooks(isbn).catch(() => EMPTY_BOOK),
-    openlibrary(isbn).catch(() => EMPTY_BOOK),
+    googlebooks(isbn, fetchOptions).catch(() => EMPTY_BOOK),
+    openlibrary(isbn, fetchOptions).catch(() => EMPTY_BOOK),
   ]);
 
   return {

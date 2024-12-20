@@ -1,4 +1,4 @@
-import type { Book } from ".";
+import type { Book, FetchOptions } from ".";
 
 const GOOGLEBOOKS_BASE_URL = "https://www.googleapis.com/books/v1";
 
@@ -51,8 +51,8 @@ function parseIsbn(GoogleBooksIsbn: GoogleBooksIsbn[] | undefined, type: "ISBN_1
  * @param isbn the ISBN to fetch. Should be a valid ISBN-10 or ISBN-13.
  * @returns a Book object with the fetched data.
  */
-export default async function googlebooks(isbn: string): Promise<Book> {
-  const response = await fetch(`${GOOGLEBOOKS_BASE_URL}/volumes?q=isbn:${isbn}`);
+export default async function googlebooks(isbn: string, fetchOptions?: FetchOptions): Promise<Book> {
+  const response = await fetch(`${GOOGLEBOOKS_BASE_URL}/volumes?q=isbn:${isbn}`, fetchOptions);
   if (!response.ok)
     throw new Error("fetch googlebooks failed: " + response.statusText);
 
