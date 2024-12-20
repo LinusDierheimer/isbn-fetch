@@ -28,8 +28,8 @@ type GoogleBooksSearchInfo = {
 };
 
 type GoogleBooksVolume = {
-  searchInfo: GoogleBooksSearchInfo;
-  volumeInfo: GoogleBooksVolumeInfo;
+  searchInfo?: GoogleBooksSearchInfo;
+  volumeInfo?: GoogleBooksVolumeInfo;
 };
 
 type GoogleBooksVolumeResponse = {
@@ -66,18 +66,18 @@ export default async function googlebooks(isbn: string): Promise<Book> {
 
   for (const item of data.items) {
     book = {
-      isbn10: parseIsbn(item.volumeInfo.industryIdentifiers, "ISBN_10"),
-      isbn13: parseIsbn(item.volumeInfo.industryIdentifiers, "ISBN_13"),
-      title: item.volumeInfo.title,
-      authors: item.volumeInfo.authors,
-      publishers: item.volumeInfo.publisher ? [item.volumeInfo.publisher] : undefined,
-      publishedDate: item.volumeInfo.publishedDate,
-      description: item.volumeInfo.description || item.searchInfo.textSnippet,
-      pageCount: item.volumeInfo.pageCount,
-      genres: item.volumeInfo.categories,
-      thumbnail: item.volumeInfo.imageLinks?.thumbnail,
-      thumbnailSmall: item.volumeInfo.imageLinks?.smallThumbnail,
-      language: item.volumeInfo.language,
+      isbn10: parseIsbn(item.volumeInfo?.industryIdentifiers, "ISBN_10"),
+      isbn13: parseIsbn(item.volumeInfo?.industryIdentifiers, "ISBN_13"),
+      title: item.volumeInfo?.title,
+      authors: item.volumeInfo?.authors,
+      publishers: item.volumeInfo?.publisher ? [item.volumeInfo.publisher] : undefined,
+      publishedDate: item.volumeInfo?.publishedDate,
+      description: item.volumeInfo?.description || item.searchInfo?.textSnippet,
+      pageCount: item.volumeInfo?.pageCount,
+      genres: item.volumeInfo?.categories,
+      thumbnail: item.volumeInfo?.imageLinks?.thumbnail,
+      thumbnailSmall: item.volumeInfo?.imageLinks?.smallThumbnail,
+      language: item.volumeInfo?.language,
 
       //Preserve previous values
       ...book
