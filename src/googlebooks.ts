@@ -37,11 +37,11 @@ type GoogleBooksVolumeResponse = {
   items: GoogleBooksVolume[];
 };
 
-function parseIsbn(GoogleBooksIsbn: GoogleBooksIsbn[] | undefined, type: "ISBN_10" | "ISBN_13"): string | undefined {
-  if (!GoogleBooksIsbn || GoogleBooksIsbn.length === 0)
+function parseIsbn(isbns: GoogleBooksIsbn[] | undefined, type: "ISBN_10" | "ISBN_13"): string | undefined {
+  if (!isbns || isbns.length === 0)
     return undefined;
 
-  return GoogleBooksIsbn.find(i => i.type === type)?.identifier;
+  return isbns.find(i => i.type === type)?.identifier;
 }
 
 /**

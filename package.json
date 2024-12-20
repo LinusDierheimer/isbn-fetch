@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "test": "tsx test/index.ts",
-    "publish": "npm run build && npm publish"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "isbn",
