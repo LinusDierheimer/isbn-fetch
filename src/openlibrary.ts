@@ -7,6 +7,11 @@ type OpenLibraryReference = {
   key: string;
 };
 
+type OpenLibraryTextValue = string | {
+  type: "/type/text";
+  value: string;
+};
+
 type OpenLibraryBook = {
   title?: string;
   publishers?: string[];
@@ -14,7 +19,7 @@ type OpenLibraryBook = {
   authors?: OpenLibraryReference[];
   works?: OpenLibraryReference[];
   languages?: OpenLibraryReference[];
-  description?: string;
+  description?: OpenLibraryTextValue;
   isbn_10?: string[];
   isbn_13?: string[];
   covers?: string[];
@@ -147,6 +152,16 @@ function parseCover(covers: string[] | undefined, size: "S" | "M" | "L"): string
   return `${OPENLIBRARY_COVER_URL}/${covers[0]}-${size}.jpg`;
 }
 
+function parseTextValue(textValue?: OpenLibraryTextValue): string | undefined {
+  if (!textValue)
+    return undefined;
+
+  if (typeof textValue === "string")
+    return textValue;
+
+  return textValue.value;
+}
+
 /**
  * Fetches a book from Open Library.
  *
@@ -178,7 +193,7 @@ export default async function openlibrary(isbn: string, fetchOptions?: FetchOpti
     language: language,
     thumbnail: parseCover(data.covers, "L"),
     thumbnailSmall: parseCover(data.covers, "S"),
-    description: data.description,
+    description: parseTextValue(data.description),
     publishers: data.publishers,
   };
 }
