@@ -15,5 +15,11 @@ import IsbnFetch from '../src/index';
     console.error("openlibrary:", e.message);
   }
 
+  try {
+    console.log("isbndbWebscrape:", await IsbnFetch.isbndbWebscrape(isbn));
+  } catch (e) {
+    console.error("isbndbWebscrape:", e.message);
+  }
+
   console.log("combined:", await IsbnFetch.combined(isbn));
 })();

@@ -42,10 +42,13 @@ export type FetchOptions = Omit<RequestInit, "body" | "method" | "keepalive">;
 
 import googlebooks from "./googlebooks";
 import openlibrary from "./openlibrary";
-import combined from "./combined";
+import isbndbWebscrape from "./isbndbWebscrape";
+import combined, { combinedResults } from "./combined";
 
 export default {
   googlebooks,
   openlibrary,
+  isbndbWebscrape,
   combined,
+  combinedResults,
 };

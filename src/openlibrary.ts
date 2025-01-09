@@ -167,6 +167,7 @@ function parseTextValue(textValue?: OpenLibraryTextValue): string | undefined {
  *
  * @throws an error if the fetch fails.
  * @param isbn the ISBN to fetch. Should be a valid ISBN-10 or ISBN-13.
+ * @param fetchOptions fetch options to pass to fetch.
  * @returns a Book object with the fetched data.
  */
 export default async function openlibrary(isbn: string, fetchOptions?: FetchOptions): Promise<Book> {
