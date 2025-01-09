@@ -1,9 +1,18 @@
 import type { Book, FetchOptions } from ".";
+import amazonWebscrape from "./amazonWebscrape";
 import googlebooks from "./googlebooks";
 import isbndbWebscrape from "./isbndbWebscrape";
 import openlibrary from "./openlibrary";
 
-const EMPTY_BOOK: Book = { isbnSource: "" };
+/**
+ * The results from the different providers.
+ */
+export type BooksResults = {
+  googlebooks?: Book,
+  openlibrary?: Book,
+  isbndbWebscrape?: Book,
+  amazonWebscrape?: Book,
+};
 
 /**
  *
@@ -16,30 +25,87 @@ const EMPTY_BOOK: Book = { isbnSource: "" };
  * @param isbndbWebscrape_book The Book object returned by the isbndbWebscrape provider.
  * @returns A Book object with the combined data from the providers.
  */
-export function combinedResults(isbn: string,
-    googlebooks_book: Book | undefined,
-    openlibrary_book: Book | undefined,
-    isbndbWebscrape_book: Book | undefined
-): Book {
-  googlebooks_book = googlebooks_book || EMPTY_BOOK;
-  openlibrary_book = openlibrary_book || EMPTY_BOOK;
-  isbndbWebscrape_book = isbndbWebscrape_book || EMPTY_BOOK;
+export function combinedResults(books: BooksResults): Book {
+  books.googlebooks = books.googlebooks || {};
+  books.openlibrary = books.openlibrary || {};
+  books.isbndbWebscrape = books.isbndbWebscrape || {};
+  books.amazonWebscrape = books.amazonWebscrape || {};
 
-  return {
-    isbnSource:     isbn,
-    isbn10:         isbndbWebscrape_book.isbn10     || googlebooks_book.isbn10             || openlibrary_book.isbn10,
-    isbn13:         isbndbWebscrape_book.isbn13     || googlebooks_book.isbn13             || openlibrary_book.isbn13,
-    title:          googlebooks_book.title          || openlibrary_book.title              || isbndbWebscrape_book.title,
-    authors:        googlebooks_book.authors        || openlibrary_book.authors            || isbndbWebscrape_book.authors,
-    publishedDate:  googlebooks_book.publishedDate  || openlibrary_book.publishedDate      || isbndbWebscrape_book.publishedDate,
-    genres:         openlibrary_book.genres         || googlebooks_book.genres             || isbndbWebscrape_book.genres,
-    language:       openlibrary_book.language       || googlebooks_book.language           || isbndbWebscrape_book.language,
-    pageCount:      googlebooks_book.pageCount      || openlibrary_book.pageCount          || isbndbWebscrape_book.pageCount,
-    thumbnail:      openlibrary_book.thumbnail      || isbndbWebscrape_book.thumbnail      || googlebooks_book.thumbnail,
-    thumbnailSmall: openlibrary_book.thumbnailSmall || isbndbWebscrape_book.thumbnailSmall || googlebooks_book.thumbnailSmall,
-    description:    openlibrary_book.description    || googlebooks_book.description        || isbndbWebscrape_book.description,
-    publishers:     openlibrary_book.publishers     || googlebooks_book.publishers         || isbndbWebscrape_book.publishers,
-  }
+  let book: Book = {}
+
+  book.isbn10 =
+    books.isbndbWebscrape.isbn10 ||
+    books.googlebooks.isbn10 ||
+    books.openlibrary.isbn10 ||
+    books.amazonWebscrape.isbn10;
+
+  book.isbn13 =
+    books.isbndbWebscrape.isbn13 ||
+    books.googlebooks.isbn13 ||
+    books.openlibrary.isbn13 ||
+    books.amazonWebscrape.isbn13;
+
+  book.title =
+    books.googlebooks.title ||
+    books.openlibrary.title ||
+    books.isbndbWebscrape.title ||
+    books.amazonWebscrape.title;
+
+  book.authors =
+    books.googlebooks.authors ||
+    books.openlibrary.authors ||
+    books.isbndbWebscrape.authors ||
+    books.amazonWebscrape.authors;
+
+  book.publishedDate =
+    books.googlebooks.publishedDate ||
+    books.openlibrary.publishedDate ||
+    books.isbndbWebscrape.publishedDate ||
+    books.amazonWebscrape.publishedDate;
+
+  book.genres =
+    books.openlibrary.genres ||
+    books.googlebooks.genres ||
+    books.isbndbWebscrape.genres ||
+    books.amazonWebscrape.genres;
+
+  book.language =
+    books.openlibrary.language ||
+    books.googlebooks.language ||
+    books.isbndbWebscrape.language ||
+    books.amazonWebscrape.language;
+
+  book.pageCount =
+    books.googlebooks.pageCount ||
+    books.openlibrary.pageCount ||
+    books.isbndbWebscrape.pageCount ||
+    books.amazonWebscrape.pageCount;
+
+  book.thumbnail =
+    books.openlibrary.thumbnail ||
+    books.isbndbWebscrape.thumbnail ||
+    books.amazonWebscrape.thumbnail ||
+    books.googlebooks.thumbnail;
+
+  book.thumbnailSmall =
+    books.openlibrary.thumbnailSmall ||
+    books.isbndbWebscrape.thumbnailSmall ||
+    books.amazonWebscrape.thumbnailSmall ||
+    books.googlebooks.thumbnailSmall;
+
+  book.description =
+    books.amazonWebscrape.description ||
+    books.openlibrary.description ||
+    books.googlebooks.description ||
+    books.isbndbWebscrape.description;
+
+  book.publishers =
+    books.openlibrary.publishers ||
+    books.googlebooks.publishers ||
+    books.isbndbWebscrape.publishers ||
+    books.amazonWebscrape.publishers;
+
+  return book;
 }
 
 /**
@@ -52,11 +118,17 @@ export function combinedResults(isbn: string,
  * @returns a Book object with the fetched data.
  */
 export default async function combined(isbn: string, fetchOptions?: FetchOptions): Promise<Book> {
-  const [googlebooks_book, openlibrary_book, isbndbWebscrape_book] = await Promise.all([
+  const [googlebooks_book, openlibrary_book, isbndbWebscrape_book, amazonWebscrape_book] = await Promise.all([
     googlebooks(isbn, fetchOptions).catch(() => undefined),
     openlibrary(isbn, fetchOptions).catch(() => undefined),
     isbndbWebscrape(isbn, fetchOptions).catch(() => undefined),
+    amazonWebscrape(isbn, fetchOptions).catch(() => undefined),
   ]);
 
-  return combinedResults(isbn, googlebooks_book, openlibrary_book, isbndbWebscrape_book);
+  return combinedResults({
+    googlebooks: googlebooks_book,
+    openlibrary: openlibrary_book,
+    isbndbWebscrape: isbndbWebscrape_book,
+    amazonWebscrape: amazonWebscrape_book,
+  });
 }

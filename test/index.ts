@@ -21,5 +21,11 @@ import IsbnFetch from '../src/index';
     console.error("isbndbWebscrape:", e.message);
   }
 
+  try {
+    console.log("amazonWebscrape:", await IsbnFetch.amazonWebscrape(isbn));
+  } catch (e) {
+    console.error("amazonWebscrape:", e.message);
+  }
+
   console.log("combined:", await IsbnFetch.combined(isbn));
 })();

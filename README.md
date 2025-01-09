@@ -26,6 +26,7 @@ try {
 | `googlebooks` | Fetches book information from the Google Books API. |
 | `openlibrary` | Fetches book information from the Open Library API. |
 | `isbndbWebscrape` | Fetches book information by scraping the ISBNdb website. |
+| `amazonWebscrape` | Fetches book information by scraping the Amazon website. |
 | `combined` | Fetches book information from all other providers. Tries to return the most complete information. |
 
 All providers are exported as functions from the default export object.  
@@ -37,7 +38,6 @@ A `Book` object is defined as follows:
 
 ```typescript
 type Book = {
-    isbnSource: string;
     isbn10?: string;
     isbn13?: string;
     title?: string;
@@ -84,12 +84,12 @@ You can use the `combinedResults` function to merge the results of only selected
 ```typescript
 import IsbnFetch from 'isbn-fetch';
 
-const isbnSource = '978-3-453-31716-1'; // Used to set the isbnSource field in the result
-const googlebooks_book = /* fetch or undefined */;
-const openlibrary_book = /* fetch or undefined */;
-const isbndbWebscrape_book = /* fetch or undefined */;
-
-const book = IsbnFetch.combinedResults(isbnSource, googlebooks_book, openlibrary_book, isbndbWebscrape_book);
+const book = IsbnFetch.combinedResults({
+    googlebooks: /* fetched Book or undefined */,
+    openlibrary: /* fetched Book or undefined */,
+    isbndbWebscrape: /* fetched Book or undefined */,
+    amazonWebscrape: /* fetched Book or undefined */
+});
 ```
 
 This is not a simple function over an array of books because it knows which provider has the best chance of providing the best information for each field.

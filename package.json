@@ -1,6 +1,6 @@
 {
   "name": "isbn-fetch",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Fetch book metadata from various sources given an isbn",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,9 +21,9 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jsdom": "^21.1.7",
-    "jsdom": "^25.0.1",
+    "jsdom": "^26.0.0",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.3"
   },
   "engines": {
     "node": ">=14"

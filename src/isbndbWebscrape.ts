@@ -1,16 +1,5 @@
 import type { Book, FetchOptions } from ".";
-
-async function parseHTML(html: string): Promise<Document> {
-  if(typeof DOMParser !== "undefined")
-    return new DOMParser().parseFromString(html, "text/html");
-
-  try {
-    const { JSDOM } = await import("jsdom");
-    return new JSDOM(html).window.document;
-  } catch {}
-
-  throw new Error("DOMParser is undefined and JSDOM is not available");
-}
+import { parseHTML } from "./util";
 
 function parseText(elment: Element): string | undefined {
   const text = elment.textContent?.trim();
@@ -49,7 +38,6 @@ export default async function isbndbWebscrape(isbn: string, fetchOptions?: Fetch
   const bookTable = doc.querySelector(".book-table");
 
   let book: Book = {
-    isbnSource: isbn,
     thumbnail: image,
     thumbnailSmall: image,
     title: bookTable?.querySelector("h1")?.textContent ?? undefined,

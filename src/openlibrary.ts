@@ -184,7 +184,6 @@ export default async function openlibrary(isbn: string, fetchOptions?: FetchOpti
   ]);
 
   return {
-    isbnSource: isbn,
     isbn10: parseIsbn(data.isbn_10),
     isbn13: parseIsbn(data.isbn_13),
     title: data.title,

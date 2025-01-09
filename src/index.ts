@@ -2,7 +2,6 @@
  * A Book object represents a book with its metadata.
  */
 export type Book = {
-  isbnSource: string;
   isbn10?: string;
   isbn13?: string;
   title?: string;
@@ -43,12 +42,16 @@ export type FetchOptions = Omit<RequestInit, "body" | "method" | "keepalive">;
 import googlebooks from "./googlebooks";
 import openlibrary from "./openlibrary";
 import isbndbWebscrape from "./isbndbWebscrape";
-import combined, { combinedResults } from "./combined";
+import amazonWebscrape from "./amazonWebscrape";
+import combined, { combinedResults, type BooksResults } from "./combined";
 
 export default {
   googlebooks,
   openlibrary,
   isbndbWebscrape,
+  amazonWebscrape,
   combined,
   combinedResults
 };
+
+export { type BooksResults };

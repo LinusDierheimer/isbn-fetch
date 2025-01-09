@@ -61,9 +61,7 @@ export default async function googlebooks(isbn: string, fetchOptions?: FetchOpti
   if (data.totalItems === 0)
     throw new Error("No items found");
 
-  let book: Book = {
-    isbnSource: isbn,
-  };
+  let book: Book = {};
 
   for (const item of data.items) {
     book = {
