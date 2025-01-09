@@ -1,7 +1,7 @@
 import IsbnFetch from '../src/index';
 
 (async () => {
-  const isbn = '978-3-8000-4705-5';
+  const isbn = '978-3-458-17876-7';
 
   try {
     console.log("googlebooks:", await IsbnFetch.googlebooks(isbn));

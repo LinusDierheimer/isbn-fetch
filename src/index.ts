@@ -50,5 +50,5 @@ export default {
   openlibrary,
   isbndbWebscrape,
   combined,
-  combinedResults,
+  combinedResults
 };
